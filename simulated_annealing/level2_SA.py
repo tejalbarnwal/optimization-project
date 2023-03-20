@@ -17,7 +17,7 @@ class Optimization:
         self.speed = 5 #m/s
         self.max_capacity = 2 #kg
         self.max_recharge_time = 180 #sec
-        self.max_energy = 100000 #joules
+        self.max_energy = 50000 #joules #50000
         self.uav_mass = 10 #kg
 
         self.travel_time_matrix = self.generate_travel_time_matrix(self.x_vector, self.y_vector, self.speed)
@@ -49,7 +49,7 @@ class Optimization:
         uav_mass = self.uav_mass
         speed = self.speed
         g = 10
-        mot_eff, prop_eff = 0.9, 0.8
+        mot_eff, prop_eff = 0.9, 0.9
         const = speed * g / (mot_eff * prop_eff)
         return (payload + uav_mass) * const
     
@@ -110,10 +110,10 @@ class Optimization:
         
         return new_path
     
-    def create_new_path1(self, new_path):
+    def create_new_path1(self, new_path, i):
         # CONSIDERING 0 AS DEPOT
         N_CITIES = len(new_path) - 2
-        # random.seed(0)
+        
         position = random.sample(range(1, N_CITIES), 1) 
         positions_to_swap = [position[0], position[0]+1]
         temp = new_path[positions_to_swap[0]]
@@ -135,7 +135,7 @@ class Optimization:
     
 
     def simulated_annealing(self, n_iterations, temperature, initial_guess):
-        COOLING_RATE = 0.98
+        COOLING_RATE = 0.999
         CONSTANT_C = 1
         # N_CITIES = len(initial_guess) - 1
         
@@ -144,7 +144,7 @@ class Optimization:
         bool_result, payload_vector = self.check_capacity_constraints(current_path, 
                                                                       self.demand_vector, self.max_capacity)
         while(not bool_result):
-            current_path = self.create_new_path1(current_path)
+            current_path = self.create_new_path1(current_path, 0)
             bool_result, payload_vector = self.check_capacity_constraints(current_path, 
                                                                       self.demand_vector, self.max_capacity)
             
@@ -177,13 +177,13 @@ class Optimization:
         j = 0
         
         for i in range(n_iterations):
-            new_path = self.create_new_path1(new_path.copy())
+            new_path = self.create_new_path1(current_path.copy(), i)
             bool_result, payload_vector = self.check_capacity_constraints(new_path, 
                                                                             self.demand_vector, 
                                                                             self.max_capacity)
             while(not bool_result):
                 # create new feasible path
-                new_path = self.create_new_path1(new_path.copy())
+                new_path = self.create_new_path1(current_path.copy(), i)
                 bool_result, payload_vector = self.check_capacity_constraints(new_path, 
                                                                       self.demand_vector, self.max_capacity)
                 # print("#####################################")
@@ -251,15 +251,15 @@ class Optimization:
         return current_path    
 
 
-
+random.seed(1)
 file = '/home/radiant/Acads/ae755_project/project_venv/optimization-project/datasets/level2_dataset - Sheet2.csv'
 df = pd.read_csv(file)  
 
 obj = Optimization(df)
 initial_guess = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
-n_iterations = 50000
+n_iterations = 200000
 temperature = 10000
-obj.simulated_annealing(n_iterations, temperature, initial_guess)
+solution = obj.simulated_annealing(n_iterations, temperature, initial_guess)
 
 
 n = len(obj.objective_value_history)
@@ -281,5 +281,14 @@ plt.plot(a, obj.objective_value_history, "k.")
 # plt.pause(0.0001)
 
 
+plt.figure("2")
+plt.scatter(obj.x_vector, obj.y_vector)
+for i in range(len(solution)-1):
+    j = solution[i]
+    j_ = solution[i+1]
+    x_list = [obj.x_vector[0, j], obj.x_vector[0, j_]]
+    y_list = [obj.y_vector[0, j], obj.y_vector[0, j_]]
+    # print(x_list, y_list)
+    plt.plot(x_list, y_list)
 
 plt.show()

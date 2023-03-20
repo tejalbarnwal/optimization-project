@@ -19,7 +19,7 @@ class Optimization:
 
     # HIGHTLIGHT
     def find_neighbour(self, x, i):
-        random.seed(i)
+        # random.seed(i)
         x_new = x + random.gauss(0, 1)
         while (x_new < -3) or (x_new > 3):
             x_new = x + random.gauss(0, 1)
@@ -92,7 +92,7 @@ class Optimization:
         return current_x
 
 
-
+random.seed(1)
 obj = Optimization()
 
 ## plot rastridge function 
@@ -152,8 +152,5 @@ plt.pause(0.1)
 
 
 plt.show()
-
-
-
 
 

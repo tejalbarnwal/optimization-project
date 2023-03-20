@@ -52,7 +52,7 @@ class Optimization:
     def create_new_path1(self, new_path, seed_):
         # CONSIDERING 0 AS DEPOT
         N_CITIES = len(new_path) - 2
-        random.seed(seed_)
+        # random.seed(seed_)
         position = random.sample(range(1, N_CITIES), 1) 
         positions_to_swap = [position[0], position[0]+1]
         temp = new_path[positions_to_swap[0]]
@@ -74,7 +74,7 @@ class Optimization:
     
 
     def simulated_annealing(self, n_iterations, temperature, initial_guess):
-        COOLING_RATE = 0.999
+        COOLING_RATE = 0.99
         CONSTANT_C = 1
         # N_CITIES = len(initial_guess) - 1
         
@@ -157,7 +157,7 @@ class Optimization:
         return current_path    
 
 
-
+random.seed(1)
 file = '/home/radiant/Acads/ae755_project/project_venv/optimization-project/datasets/level2_dataset - Sheet2.csv'
 df = pd.read_csv(file)  
 
