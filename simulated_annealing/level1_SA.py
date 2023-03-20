@@ -197,6 +197,4 @@ for i in range(len(solution)-1):
     plt.plot(x_list, y_list)
 
 
-
-
 plt.show()
