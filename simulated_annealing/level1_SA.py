@@ -9,8 +9,8 @@ from timeit import default_timer as timer
 class Optimization:
     def __init__(self, df):
         KM_M_CONVERSION = 1000
-        self.x_vector = df['X coord'].to_numpy().reshape(1, 29) * KM_M_CONVERSION
-        self.y_vector = df['Y coord'].to_numpy().reshape(1, 29) * KM_M_CONVERSION
+        self.x_vector = df['X coord'].to_numpy().reshape(1, 10) * KM_M_CONVERSION
+        self.y_vector = df['Y coord'].to_numpy().reshape(1, 10) * KM_M_CONVERSION
 
         self.speed = 5 #m/s
 
@@ -75,8 +75,7 @@ class Optimization:
     
 
     def simulated_annealing(self, n_iterations, temperature, initial_guess):
-        
-        COOLING_RATE = 0.9 #0.9 #0.91 #0.85
+        COOLING_RATE = 0.991
         CONSTANT_C = 1
         # N_CITIES = len(initial_guess) - 1
         
@@ -154,31 +153,25 @@ class Optimization:
             print("-------------------------------------------")
             self.store_visited_paths(current_path)
             self.store_results(current_objective_value, current_temperature)
-
-
             
             
         return current_path    
 
 
-random.seed(3)
-# file = '/home/radiant/Acads/ae755_project/project_venv/optimization-project/datasets/level2_dataset - Sheet2.csv'
-file = '/home/radiant/Acads/ae755_project/project_venv/optimization-project/datasets/city29.csv'
+random.seed(1)
+file = '/home/radiant/Acads/ae755_project/project_venv/optimization-project/datasets/level2_dataset - Sheet2.csv'
 df = pd.read_csv(file)  
 
 obj = Optimization(df)
-p = np.arange(0, 29)
-initial_guess = np.append(p, 0)
-n_iterations = 50000
-temperature = 500000
+initial_guess = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
+n_iterations = 1000
+temperature = 10000
 
 start = timer()
 solution = obj.simulated_annealing(n_iterations, temperature, initial_guess)
 end = timer()
 
 print("time used:", end-start)
-print(solution.shape)
-
 
 n = len(obj.objective_value_history)
 a = np.arange(0, n)
