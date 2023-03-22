@@ -3,6 +3,7 @@ import random
 import pandas as pd
 import math
 from matplotlib import pyplot as plt
+from timeit import default_timer as timer
 
 
 class Optimization:
@@ -74,7 +75,7 @@ class Optimization:
     
 
     def simulated_annealing(self, n_iterations, temperature, initial_guess):
-        COOLING_RATE = 0.99
+        COOLING_RATE = 0.991
         CONSTANT_C = 1
         # N_CITIES = len(initial_guess) - 1
         
@@ -159,14 +160,19 @@ class Optimization:
 
 random.seed(1)
 file = '/home/radiant/Acads/ae755_project/project_venv/optimization-project/datasets/level2_dataset - Sheet2.csv'
+# file = '/home/radiant/Acads/ae755_project/project_venv/optimization-project/datasets/city29.csv'
 df = pd.read_csv(file)  
 
 obj = Optimization(df)
 initial_guess = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
-n_iterations = 10000
+n_iterations = 1000
 temperature = 10000
-solution = obj.simulated_annealing(n_iterations, temperature, initial_guess)
 
+start = timer()
+solution = obj.simulated_annealing(n_iterations, temperature, initial_guess)
+end = timer()
+
+print("time used:", end-start)
 
 n = len(obj.objective_value_history)
 a = np.arange(0, n)
@@ -182,8 +188,14 @@ a = np.arange(0, n)
 
 plt.subplot(2, 1, 1)
 plt.plot(a, obj.tempertaure_history, "k-")
+plt.title("Temperature V/S no of iterations")
+plt.xlabel("no of iterations")
+plt.ylabel("Temperature")
 plt.subplot(2, 1, 2)
 plt.plot(a, obj.objective_value_history, "k-")
+plt.title("Objective Value V/S no of iterations")
+plt.xlabel("no of iterations")
+plt.ylabel("Objective Value")
 # plt.pause(0.0001)
 
 plt.figure("2")
@@ -194,7 +206,8 @@ for i in range(len(solution)-1):
     x_list = [obj.x_vector[0, j], obj.x_vector[0, j_]]
     y_list = [obj.y_vector[0, j], obj.y_vector[0, j_]]
     # print(x_list, y_list)
-    plt.plot(x_list, y_list)
+    plt.plot(x_list, y_list, "ko-")
+    plt.text(x_list[0], y_list[0], str(j), fontsize="small", backgroundcolor="r")
 
 
 plt.show()

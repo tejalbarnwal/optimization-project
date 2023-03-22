@@ -105,8 +105,8 @@ obj = Optimization()
 
 init_guess = 2.99
 n_iterations = 150
-temperature = 10000
-cooling_rate = 0.9
+temperature = 100
+cooling_rate = 0.6
 
 obj.simulated_annealing(n_iterations, temperature, init_guess, cooling_rate)
 
@@ -133,13 +133,16 @@ plt.pause(0.1)
 for i in range(n):
     plt.subplot(3, 1, 1)
     plt.plot(obj.history_x[i], obj.history_obj[i], "y.")
-    plt.title("Space x explored")
+    plt.xlabel("x")
+    plt.ylabel("objective value")
     plt.subplot(3, 1, 2)
     plt.plot(i, obj.history_temp[i], "c.")
-    plt.title("Temp V/S Iterations")
+    plt.xlabel("iterations")
+    plt.ylabel("temperature")
     plt.subplot(3, 1, 3)
     plt.plot(i, obj.history_obj[i], "g.")
-    plt.title("Objective value V/S Iterations")
+    plt.xlabel("iterations")
+    plt.ylabel("objective value")
     plt.pause(0.1)
 
 plt.subplot(3, 1, 1)
