@@ -309,3 +309,5 @@ for i in range(len(solution)-1):
 
 
 plt.show()
+
+# mmake changes according to stage 3 ppt
