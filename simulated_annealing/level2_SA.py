@@ -254,7 +254,7 @@ class Optimization:
 
 
 random.seed(1)
-file = '/home/radiant/Acads/ae755_project/project_venv/optimization-project/datasets/level2_dataset - Sheet2.csv'
+file = '/home/devank/tejal/acads/optimization-project/datasets/level2_dataset - Sheet2.csv'
 df = pd.read_csv(file)  
 
 obj = Optimization(df)
