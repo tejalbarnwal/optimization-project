@@ -9,7 +9,7 @@ from timeit import default_timer as timer
 class Optimization:
     def __init__(self, df):
         KM_M_CONVERSION = 1
-        self.num_cities = 38
+        self.num_cities = 194
         self.x_vector = df['X coord'].to_numpy().reshape(1, self.num_cities) * KM_M_CONVERSION
         self.y_vector = df['Y coord'].to_numpy().reshape(1, self.num_cities) * KM_M_CONVERSION
 
@@ -81,7 +81,7 @@ class Optimization:
 
 
     def simulated_annealing(self, n_iterations, temperature, initial_guess):
-        COOLING_RATE = 0.9
+        COOLING_RATE = 0.998
         CONSTANT_C = 1
         
         # calculate a feasible initial path
@@ -136,9 +136,8 @@ class Optimization:
                 pass
 
             
-            current_temperature = temperature * np.power(COOLING_RATE, i)
-            # current_temperature = temperature / ((np.log(100 + i*100)) * 4.0)
-            # current_temperature = temperature / (4.0 * np.log(100 + i*100))
+            # current_temperature = temperature * np.power(COOLING_RATE, i)
+            current_temperature = temperature / (np.log(100 + i*100)*1.0)
             # N = 5000
             # current_temperature = temperature * ((N - 1 - i)/ N)
             # current_temperature = temperature - (temperature * (i/ N))
@@ -147,7 +146,7 @@ class Optimization:
 
             print("---------------")
             print("iteration number: ", i)
-            print("current path: ", current_path)
+            # print("current path: ", current_path)
             print("current objective value: ", current_objective_value)
             print("current_temperature: ", current_temperature, "\n")
             print("-------------------------------------------")
@@ -155,8 +154,8 @@ class Optimization:
             self.store_results(current_objective_value, current_temperature)
 
             # if round(current_temperature, 4) == 0.0:
-            #     return current_path 
-            if round(sum(self.objective_value_history[-1000:])/1000, 2) == round(self.objective_value_history[-1], 2):
+                # return current_path 
+            if round(sum(self.objective_value_history[-5000:])/5000, 2) == round(self.objective_value_history[-1], 2):
                 return current_path
 
             
@@ -165,7 +164,7 @@ class Optimization:
 
 
 # define file
-file = '/home/devank/tejal/acads/optimization-project/datasets/level1_benchmark/level1_cities38 - Sheet1.csv'
+file = '/home/devank/tejal/acads/optimization-project/datasets/level1_benchmark/level1_cities194 - Sheet1.csv'
 df = pd.read_csv(file)  
 
 # define objective
@@ -175,24 +174,24 @@ obj = Optimization(df)
 n_cities = obj.num_cities
 
 # initial guess
-# initial_guess = np.arange(0, n_cities)
-# initial_guess = np.append(initial_guess, 0)
+initial_guess = np.arange(0, n_cities)
+initial_guess = np.append(initial_guess, 0)
 # initial_guess = np.array([0, 154, 189, 50, 142, 122, 191, 179, 187, 78, 190, 110, 40, 147, 159, 161, 54, 33, 22, 62, 114, 173, 152, 139, 88, 102, 73, 178, 26, 15, 165, 69, 83, 75, 37, 38, 5, 29, 4, 18, 23, 115, 3, 1, 98, 20, 175, 105, 35, 180, 149, 68, 91, 87, 177, 119, 131, 24, 71, 167, 140, 130, 148, 118, 52, 45, 129, 63, 59, 84, 111, 181, 13, 112, 77, 172, 86, 30, 116, 183, 92, 96, 151, 143, 128, 164, 155, 95, 10, 8, 53, 156, 9, 170, 44, 11, 57, 171, 160, 28, 6, 90, 133, 125, 184, 137, 169, 186, 32, 107, 46, 150, 176, 55, 80, 174, 85, 93, 19, 146, 138, 182, 153, 135, 117, 103, 193, 66, 36, 14, 56, 76, 67, 2, 61, 72, 168, 101, 123, 7, 70, 79, 16, 49, 41, 43, 134, 109, 89, 60, 136, 166, 145, 120, 47, 104, 81, 12, 34, 39, 100, 48, 158, 188, 192, 124, 99, 82, 121, 126, 157, 185, 162, 144, 163, 94, 21, 51, 42, 31, 106, 108, 132, 127, 74, 65, 58, 64, 97, 141, 113, 17, 27, 25, 0])
 
-a = [i for i in range(1, n_cities)]
-random.shuffle(a)
+# a = [i for i in range(1, n_cities)]
+# random.shuffle(a)
 
-initial_guess = np.array([0])
-initial_guess = np.append(initial_guess, np.array(a))
-initial_guess = np.append(initial_guess, 0)
+# initial_guess = np.array([0])
+# initial_guess = np.append(initial_guess, np.array(a))
+# initial_guess = np.append(initial_guess, 0)
 
 # travel time matrix
 # print("travel_time_matrix: ")
 # print(obj.travel_time_matrix)
 
 # iterations
-n_iterations = 50000
-temperature = 15000000
+n_iterations = 2000000
+temperature = 100
 
 # time
 start = timer()
@@ -203,9 +202,6 @@ print("time used:", end-start)
 
 n = len(obj.objective_value_history)
 a = np.arange(0, n)
-
-np.savetxt('obj38_b1.txt', obj.objective_value_history, fmt='%d')
-np.savetxt('temp_b1.txt', obj.tempertaure_history, fmt='%d')
 
 
 plt.subplot(2, 1, 1)
@@ -221,7 +217,7 @@ plt.ylabel("Objective Value")
 plt.pause(0.0001)
 
 plt.figure("2")
-plt.scatter(obj.y_vector[0, 0], obj.x_vector[0, 0])
+plt.scatter(obj.y_vector, obj.x_vector)
 for i in range(len(solution)-1):
     j = solution[i]
     j_ = solution[i+1]
@@ -229,7 +225,7 @@ for i in range(len(solution)-1):
     y_list = [obj.y_vector[0, j], obj.y_vector[0, j_]]
     # print(x_list, y_list)
     plt.plot(y_list, x_list, 'o--', alpha = 0.5, markersize = 2, mec = 'r', color = 'blue')
-    # plt.text(y_list[0]+10, x_list[0]+10, str(j), fontsize=5, backgroundcolor = "r")
+    # plt.text(x_list[0], y_list[0], str(j), fontsize="small", backgroundcolor="r")
+
 
 plt.show()
-

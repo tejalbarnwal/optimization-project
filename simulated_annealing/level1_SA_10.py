@@ -8,12 +8,12 @@ from timeit import default_timer as timer
 
 class Optimization:
     def __init__(self, df):
-        KM_M_CONVERSION = 1
-        self.num_cities = 38
+        KM_M_CONVERSION = 1000
+        self.num_cities = 10
         self.x_vector = df['X coord'].to_numpy().reshape(1, self.num_cities) * KM_M_CONVERSION
         self.y_vector = df['Y coord'].to_numpy().reshape(1, self.num_cities) * KM_M_CONVERSION
 
-        self.speed = 1 #m/s
+        self.speed = 5 #m/s
 
         self.travel_time_matrix = self.generate_travel_time_matrix(self.x_vector, self.y_vector, self.speed)
         
@@ -81,7 +81,7 @@ class Optimization:
 
 
     def simulated_annealing(self, n_iterations, temperature, initial_guess):
-        COOLING_RATE = 0.9
+        COOLING_RATE = 0.99
         CONSTANT_C = 1
         
         # calculate a feasible initial path
@@ -165,7 +165,7 @@ class Optimization:
 
 
 # define file
-file = '/home/devank/tejal/acads/optimization-project/datasets/level1_benchmark/level1_cities38 - Sheet1.csv'
+file = '/home/devank/tejal/acads/optimization-project/datasets/level2_dataset - Sheet2.csv'
 df = pd.read_csv(file)  
 
 # define objective
@@ -192,7 +192,7 @@ initial_guess = np.append(initial_guess, 0)
 
 # iterations
 n_iterations = 50000
-temperature = 15000000
+temperature = 15000
 
 # time
 start = timer()
@@ -203,9 +203,6 @@ print("time used:", end-start)
 
 n = len(obj.objective_value_history)
 a = np.arange(0, n)
-
-np.savetxt('obj38_b1.txt', obj.objective_value_history, fmt='%d')
-np.savetxt('temp_b1.txt', obj.tempertaure_history, fmt='%d')
 
 
 plt.subplot(2, 1, 1)
@@ -221,15 +218,14 @@ plt.ylabel("Objective Value")
 plt.pause(0.0001)
 
 plt.figure("2")
-plt.scatter(obj.y_vector[0, 0], obj.x_vector[0, 0])
+# plt.scatter(obj.y_vector[0, 0], obj.x_vector[0, 0])
 for i in range(len(solution)-1):
     j = solution[i]
     j_ = solution[i+1]
     x_list = [obj.x_vector[0, j], obj.x_vector[0, j_]]
     y_list = [obj.y_vector[0, j], obj.y_vector[0, j_]]
     # print(x_list, y_list)
-    plt.plot(y_list, x_list, 'o--', alpha = 0.5, markersize = 2, mec = 'r', color = 'blue')
+    plt.plot(x_list, y_list, 'o--', alpha = 0.5, markersize = 2, mec = 'r', color = 'blue')
     # plt.text(y_list[0]+10, x_list[0]+10, str(j), fontsize=5, backgroundcolor = "r")
 
 plt.show()
-

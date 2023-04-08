@@ -89,7 +89,7 @@ class Optimization:
         
     def objective_function(self, new_path, travel_time_matrix, service_time_vector, 
                                                     demand_vector, max_capacity, max_energy, power_function):
-        PENALTY_CONST = 500000
+        PENALTY_CONST = 50000000
         # check capacity
         bool_capacity_result, payload_vector = self.check_capacity_constraints(new_path, 
                                                                       demand_vector, max_capacity)
@@ -128,7 +128,7 @@ class Optimization:
         
         return new_path
     
-    def create_new_path1(self, new_path, i):
+    def create_new_path1(self, new_path):
         # CONSIDERING 0 AS DEPOT
         N_CITIES = len(new_path) - 2
         
@@ -187,7 +187,7 @@ class Optimization:
         # j = 0
         
         for i in range(n_iterations):
-            new_path = self.create_new_path1(current_path.copy(), i)
+            new_path = self.create_new_path(current_path.copy())
 
             # calculate objective function path
             new_objective_value = self.objective_function(new_path, 
@@ -202,7 +202,7 @@ class Optimization:
             if new_objective_value <= current_objective_value:
                 print("condition 1: move ahead")
                 current_path = new_path.copy()
-                current_objective_value = new_objective_value.copy()
+                current_objective_value = new_objective_value
                 
                 # current_temperature = temperature
                 # j = 0
@@ -232,6 +232,7 @@ class Optimization:
             # j = j + 1
 
             current_temperature = temperature * np.power(COOLING_RATE, i)
+            # current_temperature = temperature / (np.log(100 + i))
             
             print("---------------")
             print("iteration number: ", i)
@@ -256,10 +257,10 @@ file = '/home/devank/tejal/acads/optimization-project/datasets/level2_dataset - 
 df = pd.read_csv(file)  
 
 obj = Optimization(df)
-# initial_guess = np.array([0, 1, 2, 3, 4, 5, 6, 7, 9, 8, 0])
+initial_guess = np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
 # initial_guess = np.array([0, 4, 1, 5, 7, 3, 8, 2, 6, 9, 0])
-initial_guess = np.array([0, 2, 8, 3, 7, 5, 1, 4, 6, 9, 0])
-n_iterations = 10000
+# initial_guess = np.array([0, 2, 8, 3, 7, 5, 1, 4, 6, 9, 0])
+n_iterations = 50000
 temperature = 1000
 
 start = timer()#time.time()
@@ -295,17 +296,17 @@ plt.ylabel("Objective value")
 
 
 plt.figure("2")
-plt.scatter(obj.x_vector, obj.y_vector)
+# plt.scatter(obj.x_vector, obj.y_vector)
 for i in range(len(solution)-1):
     j = solution[i]
     j_ = solution[i+1]
     x_list = [obj.x_vector[0, j], obj.x_vector[0, j_]]
     y_list = [obj.y_vector[0, j], obj.y_vector[0, j_]]
     # print(x_list, y_list)
-    plt.plot(x_list, y_list)
+    # plt.plot(x_list, y_list)
 
-    plt.plot(x_list, y_list, "ko-")
-    plt.text(x_list[0], y_list[0], str(j), fontsize="small", backgroundcolor="r")
+    plt.plot(x_list, y_list, 'o--', alpha = 0.5, markersize = 2, mec = 'r', color = 'blue')
+    # plt.text(x_list[0], y_list[0], str(j), fontsize="small", backgroundcolor="r")
 
 
 plt.show()

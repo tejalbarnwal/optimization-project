@@ -81,7 +81,7 @@ class Optimization:
 
 
     def simulated_annealing(self, n_iterations, temperature, initial_guess):
-        COOLING_RATE = 0.9
+        COOLING_RATE = 0.999
         CONSTANT_C = 1
         
         # calculate a feasible initial path
@@ -136,8 +136,8 @@ class Optimization:
                 pass
 
             
-            current_temperature = temperature * np.power(COOLING_RATE, i)
-            # current_temperature = temperature / ((np.log(100 + i*100)) * 4.0)
+            # current_temperature = temperature * np.power(COOLING_RATE, i)
+            current_temperature = temperature / ((np.log(100 + i*100)) * 2.0)
             # current_temperature = temperature / (4.0 * np.log(100 + i*100))
             # N = 5000
             # current_temperature = temperature * ((N - 1 - i)/ N)
@@ -192,7 +192,7 @@ initial_guess = np.append(initial_guess, 0)
 
 # iterations
 n_iterations = 50000
-temperature = 15000000
+temperature = 125
 
 # time
 start = timer()
@@ -204,9 +204,8 @@ print("time used:", end-start)
 n = len(obj.objective_value_history)
 a = np.arange(0, n)
 
-np.savetxt('obj38_b1.txt', obj.objective_value_history, fmt='%d')
-np.savetxt('temp_b1.txt', obj.tempertaure_history, fmt='%d')
-
+np.savetxt('obj38_log.txt', obj.objective_value_history, fmt='%d')
+np.savetxt('temp_log.txt', obj.tempertaure_history, fmt='%d')
 
 plt.subplot(2, 1, 1)
 plt.plot(a, obj.tempertaure_history, "k-")
@@ -232,4 +231,3 @@ for i in range(len(solution)-1):
     # plt.text(y_list[0]+10, x_list[0]+10, str(j), fontsize=5, backgroundcolor = "r")
 
 plt.show()
-
